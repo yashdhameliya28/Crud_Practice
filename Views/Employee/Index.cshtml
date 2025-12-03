@@ -1,0 +1,125 @@
+﻿@using System.Data
+@{
+    ViewData["Title"] = "Employee List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<main id="main" class="main">
+
+    <div class="pagetitle">
+        <h1>Employee</h1>
+        <nav>
+            
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item">
+                    <a asp-controller="HomeMaster" asp-action="Index">Home</a>
+                </li>
+                <li class="breadcrumb-item active">Employee List</li>
+            </ol>
+        </nav>
+        <form method="post" asp-action="Index" class="mb-4">
+            <div class="row">
+                <div class="col-md-3">
+                    <input type="text" name="empname" class="form-control" placeholder="Employee Name"
+                           value="@ViewBag.employeeName" />
+                </div>
+
+                <div class="col-md-3">
+                    <input type="text" name="sal" class="form-control" placeholder="salary"
+                           value="@ViewBag.salary" />
+                </div>
+
+                <div class="col-md-3">
+                    <input type="text" name="joiningdate" class="form-control" placeholder="JoiningDate"
+                           value="@ViewBag.joiningDate" />
+                </div>
+
+                <div class="col-md-3">
+                    <input type="text" name="cityname" class="form-control" placeholder="City"
+                           value="@ViewBag.cityname" />
+                </div>
+
+                <div class="col-md-3 mt-4">
+                    <select name="deptid" class="form-control"
+                            asp-items="@(new SelectList(ViewBag.DepartmentList, "DeptID", "DepartmentName", ViewBag.selectedDepartmentid))">
+                        <option value="0">Select Department</option>
+                    </select>
+                </div>
+
+                <div class="col-md-2 mt-4">
+                    <button type="submit" class="btn btn-primary w-100">Search</button>
+                </div>
+
+                <div class="col-md-1 mt-4">
+                    <a href="@Url.Action("Index")" class="btn btn-secondary w-100">Clear</a>
+                </div>
+            </div>
+        </form>
+        <div class="d-flex justify-content-end mb-2">
+            <a class="btn btn-outline-primary" asp-controller="Employee" asp-action="AddEdit">
+                Add Country
+            </a>
+        </div>
+    </div>
+
+    @* <input type="text" class="form-control mb-3" id="searchBox" placeholder="Search"> *@
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+    }
+
+    <table class="table table-hover">
+        <thead>
+            <tr>
+                <th>Employee Name</th>
+                <th>Salary</th>
+                <th>Joining Date</th>
+                <th>City</th>
+                <th class="text-center">Actions</th>
+            </tr>
+        </thead>
+
+        <tbody id="tableRows">
+            @foreach (DataRow row in Model.Rows)
+            {
+                <tr>
+                    <td>@row["EmpName"]</td>
+                    <td>@row["Salary"]</td>
+                    <td>@row["JoiningDate"]</td>
+                    <td>@row["City"]</td>
+                    @* <td>@row["DeptName"]</td> *@
+
+                    <td class="text-center">
+                         <a class="btn btn-outline-success btn-sm"
+                           asp-controller="Employee" asp-action="AddEdit"
+                           asp-route-EmpID="@row["EmpID"]">Edit</a>
+
+                        <a class="btn btn-outline-danger btn-sm"
+                           asp-controller="Department" asp-action="Delete"
+                           asp-route-EmpID="@row["EmpID"]"
+                           onclick="return confirm('Delete this Employee?');">
+                            Delete
+                        </a>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</main>
+
+@section Scripts {
+    <script>
+        $("#searchBox").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#tableRows tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1);
+            });
+        });
+    </script>
+}
