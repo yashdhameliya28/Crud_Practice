@@ -15,7 +15,7 @@ namespace CrudPractice.Controllers
         }
 
         //[HttpGet]
-        #region select all employee
+        #region select all employee and search
         public IActionResult Index(String empname = "", Double? sal = null, int deptid = 0, String cityname = "", DateTime? joiningdate=null)
         {
             LoadDepartmentDropDown();
